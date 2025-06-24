@@ -1,3 +1,23 @@
+# 🛡️ Threat Hunting with Python – Script Library
+
+## 📖 Introduction
+Threat hunting is a proactive security practice where analysts search through systems and networks to identify malicious activity that evades traditional security solutions. It involves querying logs, parsing event data, and identifying behavioral anomalies.
+
+Python scripting allows threat hunters to automate repetitive analysis, parse logs quickly, enrich indicators, and even simulate attacks or responses. Combined with Bash terminal execution, these scripts can be deployed across endpoints or run centrally for investigative tasks.
+
+This repository contains **30 Python scripts** categorized under threat detection use cases, designed to help analysts:
+
+- Parse Sysmon, DNS, Event, and Email logs
+- Detect early indicators of compromise (IOCs)
+- Monitor for lateral movement, data exfiltration, and persistence
+- Automate investigation of suspicious activity
+
+---
+
+
+
+
+
 
 # Threat Hunting with Python – Script Library
 
