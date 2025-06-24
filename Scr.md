@@ -1,38 +1,29 @@
-````markdown
-# 🛡️ Python Script Library for Proactive Cyber Threat Hunting and Remediation
+🛡️ Python Script Library for Proactive Cyber Threat Hunting and Remediation
+📖 Introduction
+In today's evolving threat landscape, proactive threat hunting is indispensable for identifying and neutralizing sophisticated malicious activities that bypass traditional security defenses. This practice involves meticulously sifting through system and network logs, parsing vast amounts of event data, and identifying subtle behavioral anomalies indicative of compromise.
 
----
+Python scripting empowers cybersecurity analysts and threat hunters to significantly enhance their capabilities by automating repetitive analysis tasks, rapidly parsing diverse log formats, enriching threat indicators, and even simulating attack or response scenarios. When combined with powerful Bash terminal execution, these scripts can be seamlessly deployed across endpoints or centrally managed for comprehensive investigative and remedial actions.
 
-## 📖 Introduction
+This repository features a curated collection of 30 Python scripts, meticulously categorized by common threat detection and response use cases. These scripts are designed to equip security professionals with practical tools to:
 
-In today's evolving threat landscape, **proactive threat hunting** is indispensable for identifying and neutralizing sophisticated malicious activities that bypass traditional security defenses. This practice involves meticulously sifting through system and network logs, parsing vast amounts of event data, and identifying subtle behavioral anomalies indicative of compromise.
+Parse and analyze critical security logs: Including Sysmon, DNS, Windows Event Logs, and Email logs.
 
-**Python scripting** empowers cybersecurity analysts and threat hunters to significantly enhance their capabilities by automating repetitive analysis tasks, rapidly parsing diverse log formats, enriching threat indicators, and even simulating attack or response scenarios. When combined with powerful **Bash terminal execution**, these scripts can be seamlessly deployed across endpoints or centrally managed for comprehensive investigative and remedial actions.
+Detect early indicators of compromise (IOCs): Identifying suspicious patterns before they escalate.
 
-This repository features a curated collection of **30 Python scripts**, meticulously categorized by common threat detection and response use cases. These scripts are designed to equip security professionals with practical tools to:
+Monitor for advanced attack techniques: Such as lateral movement, data exfiltration, and persistence mechanisms.
 
-* **Parse and analyze critical security logs**: Including Sysmon, DNS, Windows Event Logs, and Email logs.
-* **Detect early indicators of compromise (IOCs)**: Identifying suspicious patterns before they escalate.
-* **Monitor for advanced attack techniques**: Such as lateral movement, data exfiltration, and persistence mechanisms.
-* **Automate the investigation and initial response** to suspicious activities.
+Automate the investigation and initial response to suspicious activities.
 
----
-
-## 🚀 Script Catalog
-
+🚀 Script Catalog
 Below is a detailed catalog of the scripts included in this library, outlining their primary objective, ideal use cases, and execution instructions. Each script is designed for practical application in real-world threat hunting scenarios.
 
-<details>
-<summary><strong>1. `detect_suspicious_processes.py`</strong></summary>
+Goal
+Identify suspicious parent-child process relationships (e.g., winword.exe spawning cmd.exe).
 
-### Goal
-Identify suspicious parent-child process relationships (e.g., `winword.exe` spawning `cmd.exe`).
-
-### Use Case
+Use Case
 Post-phishing email analysis, investigation of macro-enabled document execution.
 
-### Python Code
-```python
+Python Code
 import pandas as pd
 
 df = pd.read_csv('../data_samples/sysmon_logs.csv')
@@ -52,30 +43,17 @@ if not matches.empty:
     print(matches[["UtcTime", "ParentImage", "Image", "CommandLine"]])
 else:
     print("✅ No anomalies detected.")
-````
 
-### Execution
-
-```bash
+Execution
 python scripts/1_detect_suspicious_processes.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>2. `vulnerable_software_removal.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Automate the uninstallation of outdated or vulnerable software via Windows Remote Management (WinRM).
 
-### Use Case
-
+Use Case
 Post-vulnerability assessment remediation, rapid patch deployment.
 
-### Python Code
-
-```python
+Python Code
 import winrm
 
 # Establish a WinRM session to the target host
@@ -93,30 +71,17 @@ if "Adobe Reader XI" in output:
     print("✅ Uninstallation triggered for Adobe Reader XI.")
 else:
     print("✅ No outdated Adobe Reader XI found.")
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/2_vulnerable_software_removal.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>3. `virus_total_hash_checker.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Leverage the VirusTotal API to check the reputation of file hashes.
 
-### Use Case
-
+Use Case
 Malware triage, initial assessment of suspicious file indicators.
 
-### Python Code
-
-```python
+Python Code
 import requests
 
 # Replace with your actual VirusTotal API Key
@@ -125,7 +90,7 @@ hashes = ['44d88612fea8a8f36de82e1278abb02f', 'example_hash_2', 'example_hash_3'
 
 print("--- VirusTotal Hash Check ---")
 for h in hashes:
-    url = f"[https://www.virustotal.com/api/v3/files/](https://www.virustotal.com/api/v3/files/){h}"
+    url = f"https://www.virustotal.com/api/v3/files/{h}"
     headers = {"x-apikey": API_KEY}
     
     try:
@@ -145,30 +110,17 @@ for h in hashes:
     except KeyError:
         print(f"Hash: {h} | Data not found or API key may be invalid.")
 print("--- Check Complete ---")
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/3_virus_total_hash_checker.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>4. `failed_login_brute_force.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Detect potential brute-force login attempts by identifying an excessive number of failed login events from a single source IP.
 
-### Use Case
-
+Use Case
 Investigation of account lockouts, analysis of anomalous login patterns.
 
-### Python Code
-
-```python
+Python Code
 import pandas as pd
 
 df = pd.read_csv('../data_samples/login_data.csv')
@@ -183,30 +135,17 @@ if not suspicious.empty:
     print(suspicious)
 else:
     print("✅ No suspicious brute-force attempts detected based on failed logins.")
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/4_failed_login_brute_force.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>5. `usb_exfiltration_detector.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Identify large file transfers to USB devices, often indicative of data exfiltration.
 
-### Use Case
-
+Use Case
 Investigation of suspected insider threats, data loss prevention (DLP) monitoring.
 
-### Python Code
-
-```python
+Python Code
 import pandas as pd
 
 df = pd.read_csv('../data_samples/event_logs_sample.csv')
@@ -225,34 +164,21 @@ if not large_transfers.empty:
     print(large_transfers[["UtcTime", "SubjectUserName", "ObjectName", "ObjectSize"]])
 else:
     print("✅ No large USB file transfers detected.")
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/5_usb_exfiltration_detector.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>6. `cve_auto_lookup.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Retrieve detailed Common Vulnerabilities and Exposures (CVE) information from the National Vulnerability Database (NVD) API.
 
-### Use Case
-
+Use Case
 During patch management research, vulnerability assessment, threat intelligence enrichment.
 
-### Python Code
-
-```python
+Python Code
 import requests
 
 cve_id = "CVE-2023-23397" # Example CVE ID
-url = f"[https://services.nvd.nist.gov/rest/json/cve/1.0/](https://services.nvd.nist.gov/rest/json/cve/1.0/){cve_id}"
+url = f"https://services.nvd.nist.gov/rest/json/cve/1.0/{cve_id}"
 
 try:
     resp = requests.get(url)
@@ -284,30 +210,17 @@ except IndexError:
     print(f"No CVE data found for {cve_id}. Check if the CVE ID is correct.")
 except KeyError as e:
     print(f"Missing expected key in JSON response for {cve_id}: {e}")
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/6_cve_auto_lookup.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>7. `dns_tunneling_detector.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Detect potential DNS tunneling by identifying unusually long or suspicious TXT record queries.
 
-### Use Case
-
+Use Case
 Detection of C2 beaconing, data exfiltration via DNS.
 
-### Python Code
-
-```python
+Python Code
 import pandas as pd
 
 df = pd.read_csv('../data_samples/dns_logs.csv')
@@ -320,30 +233,17 @@ if not suspicious.empty:
     print(suspicious[["timestamp", "client_ip", "query_name", "query_type"]])
 else:
     print("✅ No suspicious DNS tunneling candidates detected.")
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/7_dns_tunneling_detector.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>8. `network_port_scanner.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Perform a basic network port scan to identify open ports on a target host.
 
-### Use Case
-
+Use Case
 Validating host exposure, identifying unauthorized services, network reconnaissance.
 
-### Python Code
-
-```python
+Python Code
 import socket
 
 target = '192.168.1.100' # Target IP address
@@ -361,30 +261,17 @@ for port in ports:
     except socket.error as e:
         print(f"Could not connect to port {port}: {e}")
 print("--- Scan Complete ---")
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/8_network_port_scanner.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>9. `patch_compliance_checker.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Check for the presence of specific Windows Knowledge Base (KB) updates on a system.
 
-### Use Case
-
+Use Case
 Auditing patch compliance, identifying missing critical security updates.
 
-### Python Code
-
-```python
+Python Code
 import subprocess
 
 required_kbs = ["KB5027215", "KB5034441", "KBXXXXXXX"] # Add all required KBs
@@ -402,30 +289,17 @@ except FileNotFoundError:
 except Exception as e:
     print(f"An error occurred: {e}")
 print("--- Compliance Check Complete ---")
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/9_patch_compliance_checker.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>10. `rdp_session_monitor.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Monitor and detect successful Remote Desktop Protocol (RDP) sessions.
 
-### Use Case
-
+Use Case
 Post-brute-force attack investigation, detection of off-hour or unauthorized RDP access.
 
-### Python Code
-
-```python
+Python Code
 import pandas as pd
 
 df = pd.read_csv('../data_samples/login_data.csv')
@@ -438,616 +312,333 @@ if not rdp_sessions.empty:
     print(rdp_sessions[["timestamp", "source_ip", "user"]])
 else:
     print("✅ No successful RDP sessions detected based on provided logs.")
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/10_rdp_session_monitor.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>11. `suspicious_powershell_usage.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Detect obfuscated or suspicious PowerShell command execution.
 
-### Use Case
-
+Use Case
 Investigation of phishing attacks, post-exploitation activities, macro-enabled malware.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would typically parse PowerShell logs (e.g., Sysmon Event ID 4104)
 # and look for indicators like encoded commands, unusual character sets, or long command lines.
 print('Script executed. (Detection logic to be implemented based on specific log parsing needs)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/11_suspicious_powershell_usage.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>12. `malicious_domain_checker.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Flag DNS queries or network connections to known malicious domains.
 
-### Use Case
-
+Use Case
 After an IOC alert, investigation of phishing email links, network traffic analysis.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would typically ingest DNS or network connection logs
 # and compare queried domains against a blacklist of known malicious domains.
 print('Script executed. (Detection logic to be implemented based on specific log parsing and threat intelligence feeds)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/12_malicious_domain_checker.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>13. `browser_history_analyzer.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Extract and analyze browser activity (history, downloads, cookies).
 
-### Use Case
-
+Use Case
 Forensic analysis for phishing investigations, malicious link clicks, or data exfiltration via web.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual extraction and analysis logic.
 # This script would require libraries like 'browser_history' or direct SQLite parsing
 # of browser database files (e.g., Chrome, Firefox).
 print('Script executed. (Browser history extraction and analysis logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/13_browser_history_analyzer.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>14. `process_injection_detector.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Detect common process injection techniques.
 
-### Use Case
-
+Use Case
 When LSASS memory tampering, privilege escalation, or advanced malware activity is suspected.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would typically analyze Sysmon Event ID 8 (CreateRemoteThread) or Event ID 10 (ProcessAccess)
 # for unusual access patterns or remote thread creation in legitimate processes.
 print('Script executed. (Process injection detection logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/14_process_injection_detector.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>15. `mimikatz_detection_sysmon.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Detect indicators of Mimikatz usage based on Sysmon logs.
 
-### Use Case
-
+Use Case
 Credential dumping detection, lateral movement investigation.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would specifically look for Sysmon events related to LSASS access (Event ID 10)
 # with specific access mask values, or suspicious process creations related to Mimikatz tools.
 print('Script executed. (Mimikatz detection logic based on Sysmon to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/15_mimikatz_detection_sysmon.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>16. `anomalous_login_time.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Identify user logins occurring outside of typical working hours.
 
-### Use Case
-
+Use Case
 Detection of compromised accounts, insider threats, or unauthorized access.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would analyze login logs (e.g., Windows Security Event ID 4624)
 # and compare login times against defined normal operating hours.
 print('Script executed. (Anomalous login time detection logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/16_anomalous_login_time.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>17. `geoip_login_mismatch.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Detect simultaneous or rapidly sequential logins from geographically distant locations.
 
-### Use Case
-
+Use Case
 Geo-location anomaly detection, compromised account identification.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would require a GeoIP database (e.g., MaxMind) and would compare
 # the geographical locations of consecutive login attempts for a user.
 print('Script executed. (GeoIP login mismatch detection logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/17_geoip_login_mismatch.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>18. `scheduled_task_abuse.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Find newly created or modified suspicious scheduled tasks.
 
-### Use Case
-
+Use Case
 Persistence hunting, detection of lateral movement.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would parse Windows Event Logs (e.g., Event ID 4698 for scheduled task creation)
 # and look for unusual task names, actions, or associated executables.
 print('Script executed. (Scheduled task abuse detection logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/18_scheduled_task_abuse.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>19. `suspicious_registry_mods.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Find suspicious modifications to critical registry keys often used for persistence or privilege escalation.
 
-### Use Case
-
+Use Case
 Persistence hunting, privilege escalation detection.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would analyze Sysmon Event ID 12/13/14 (Registry Events)
 # for modifications to common persistence locations (e.g., Run keys, BHOs, Image File Execution Options).
 print('Script executed. (Suspicious registry modification detection logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/19_suspicious_registry_mods.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>20. `service_creation_hunt.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Detect the creation of new and potentially malicious Windows services.
 
-### Use Case
-
+Use Case
 Lateral movement detection, persistence establishment.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would parse Windows Event Logs (e.g., Event ID 7045 for service creation)
 # and look for services with suspicious names, paths, or associated user accounts.
 print('Script executed. (Malicious service creation detection logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/20_service_creation_hunt.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>21. `phishing_email_indicator_parser.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Parse and extract indicators (e.g., sender, subject, URLs, attachments) from reported phishing emails.
 
-### Use Case
-
+Use Case
 Incident response for user-reported phishing, threat intelligence gathering.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual parsing logic.
 # This script would likely use email parsing libraries (e.g., `email` module)
 # to extract headers, body content, and identify suspicious elements.
 print('Script executed. (Phishing email indicator parsing logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/21_phishing_email_indicator_parser.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>22. `beaconing_domain_hunt.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Detect regular, periodic network connections to specific domains, indicative of command-and-control (C2) beaconing.
 
-### Use Case
-
+Use Case
 C2 detection, identifying active malware communication.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would analyze network flow data or DNS logs to identify
 # repetitive, time-based communication patterns to external domains.
 print('Script executed. (Beaconing domain hunt logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/22_beaconing_domain_hunt.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>23. `unusual_process_behavior.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Identify processes exhibiting non-standard execution paths or behaviors.
 
-### Use Case
-
+Use Case
 Detection of masquerading, DLL hijacking, or other evasion techniques.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would analyze process creation events (e.g., Sysmon Event ID 1)
 # and look for processes running from unusual directories, or with unexpected parent processes.
 print('Script executed. (Unusual process behavior detection logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/23_unusual_process_behavior.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>24. `command_line_anomaly.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Detect suspicious or encoded command-line arguments.
 
-### Use Case
-
+Use Case
 Execution of PowerShell obfuscation, execution of malicious scripts.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would parse command-line logs (e.g., Sysmon Event ID 1)
 # and apply heuristics or machine learning to detect unusual encoding, long strings of random characters,
 # or suspicious arguments to legitimate executables.
 print('Script executed. (Command line anomaly detection logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/24_command_line_anomaly.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>25. `user_agent_anomaly_detector.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Identify rare, unusual, or known bot-related User-Agent strings in web traffic logs.
 
-### Use Case
-
+Use Case
 Web access monitoring, detection of automated attacks or data exfiltration.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would analyze web proxy or web server logs, parse User-Agent strings,
 # and compare them against a baseline or a blacklist of suspicious UAs.
 print('Script executed. (User-Agent anomaly detection logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/25_user_agent_anomaly_detector.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>26. `ransomware_activity_detector.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Detect indicators of ransomware activity, such as rapid bulk file encryption or deletion.
 
-### Use Case
-
+Use Case
 Early warning for ransomware outbreaks, post-infection investigation.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would monitor file system events (e.g., creation, modification, deletion)
 # for rapid changes, unusual file extensions, or a high volume of I/O operations from a single process.
 print('Script executed. (Ransomware activity detection logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/26_ransomware_activity_detector.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>27. `internal_network_scan_detector.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Detect internal network scanning activity (e.g., Nmap scans).
 
-### Use Case
-
+Use Case
 Identification of reconnaissance activity, lateral movement.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would analyze network flow data (NetFlow, sFlow) or firewall logs
 # to identify rapid, sequential connection attempts to multiple internal IP addresses/ports.
 print('Script executed. (Internal network scan detection logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/27_internal_network_scan_detector.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>28. `malicious_browser_extension_hunt.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 List and identify suspicious or unauthorized browser extensions.
 
-### Use Case
-
+Use Case
 Investigation of data exfiltration via browser, identifying malware-installed extensions.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would typically interact with browser profiles or system files
 # to enumerate installed extensions and compare them against a whitelist or known malicious extensions.
 print('Script executed. (Malicious browser extension hunt logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/28_malicious_browser_extension_hunt.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>29. `unauthorized_file_share.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Detect unauthorized external file uploads or sharing activities.
 
-### Use Case
-
+Use Case
 Data Loss Prevention (DLP) violation investigation.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would analyze network proxy logs, firewall logs, or cloud service audit logs
 # to identify uploads to unusual external destinations.
 print('Script executed. (Unauthorized file share detection logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/29_unauthorized_file_share.py
-```
 
-\</details\>
-
-\<details\>
-\<summary\>\<strong\>30. `vpn_exfil_behavior.py`\</strong\>\</summary\>
-
-### Goal
-
+Goal
 Flag network traffic directed to known anonymization services (TOR, commercial VPN IPs).
 
-### Use Case
-
+Use Case
 Identification of insider threats, advanced persistent threat (APT) activity, or policy violations.
 
-### Python Code
-
-```python
+Python Code
 # Placeholder for actual detection logic.
 # This script would analyze network flow data or DNS queries against a blacklist of
 # known TOR exit nodes or VPN service IP ranges.
 print('Script executed. (VPN/TOR exfiltration behavior detection logic to be implemented)')
-```
 
-### Execution
-
-```bash
+Execution
 python scripts/30_vpn_exfil_behavior.py
-```
 
-\</details\>
-
------
-
-## ⚙️ How to Use
-
-### Terminal Execution
-
+⚙️ How to Use
+Terminal Execution
 To execute any of the Python scripts, navigate to the root directory of this repository in your terminal and use the following command structure:
 
-```bash
 python scripts/<script_name>.py
-```
 
-**Important**: Ensure all necessary Python **dependencies** are installed (refer to `requirements.txt`) and that any required **data files** (e.g., CSV logs) are properly located within the `data_samples/` directory as referenced by the scripts.
+Important: Ensure all necessary Python dependencies are installed (refer to requirements.txt) and that any required data files (e.g., CSV logs) are properly located within the data_samples/ directory as referenced by the scripts.
 
------
-
-## 📂 Repository Structure
-
+📂 Repository Structure
 The repository is organized for clarity and ease of use:
 
-```
 Threat_Hunting_and_Remediation_Scripts/
 ├── scripts/                # Contains all Python threat hunting and remediation scripts
 ├── data_samples/           # Directory for sample log data used by the scripts (e.g., sysmon_logs.csv)
 ├── requirements.txt        # Lists all Python dependencies required for the scripts
 └── README.md               # This README file
-```
 
------
-
-## 📞 Contact
-
+📞 Contact
 For any questions, feedback, or collaborations, please feel free to reach out:
 
-  * **Author**: Bharath Devulapalli
-  * **GitHub**: [https://github.com/Bharathkasyap](https://github.com/Bharathkasyap)
-  * **LinkedIn**: [https://www.linkedin.com/in/venkatadevu/](https://www.linkedin.com/in/venkatadevu/)
+Author: Bharath Devulapalli
 
------
+GitHub: https://github.com/Bharathkasyap
 
-```
-```
+LinkedIn: https://www.linkedin.com/in/venkatadevu/
