@@ -14,7 +14,7 @@ This repository features a curated collection of 30 Python scripts, meticulously
 
 ---
 
-## 🚀 Script Catalog – Batch 1 (Scripts 1–10)
+## 🚀 Script Catalog 
 
 ### 1. `detect_suspicious_processes.py`
 **Goal**: Identify suspicious parent-child process relationships (e.g., winword.exe spawning cmd.exe).
@@ -151,36 +151,6 @@ else:
 **Execution**: `python scripts/5_usb_exfiltration_detector.py`
 
 ---
-
-## 🚀 Script Catalog – Batch 2 (Scripts 6–10)
-
-(Already added above. Now continuing with Batch 3 in the next update...)
-
-## 🚀 Script Catalog – Batch 3 (Scripts 11–20)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -494,8 +464,6 @@ else:
 </details>
 
 
-# 🚀 Script Catalog – Batch 2 (Scripts 11–20)
-
 ### 11. `detect_persistence_registry_keys.py`
 **Goal**: Identify registry keys commonly used for persistence (e.g., Run, RunOnce).
 
@@ -725,6 +693,211 @@ else:
     print("✅ No suspicious PowerShell encoding usage found.")
 ```
 **Execution**: `python scripts/20_power_shell_encoded_command_detector.py`
+
+---
+
+
+### 21. `phishing_email_indicator_parser.py`
+**Goal**: Parse email logs for phishing indicators like suspicious subjects and sender domains.
+
+**Use Case**: Investigation of reported phishing emails.
+
+**Python Code**:
+```python
+import pandas as pd
+
+df = pd.read_csv('../data_samples/email_logs.csv')
+
+phishing_subjects = ['verify account', 'suspended', 'password expired', 'urgent action']
+phishing_senders = ['mail.ru', 'protonmail.com', 'outlook.phish.net']
+
+suspicious = df[
+    df['subject'].str.lower().str.contains('|'.join(phishing_subjects), na=False) |
+    df['sender_domain'].str.lower().isin(phishing_senders)
+]
+
+print(suspicious[['timestamp', 'sender', 'subject', 'spf_status']])
+```
+**Execution**: `python scripts/21_phishing_email_indicator_parser.py`
+
+---
+
+### 22. `beaconing_domain_hunt.py`
+**Goal**: Detect C2 beaconing through frequent outbound domain queries.
+
+**Use Case**: C2 activity or malware call-back detection.
+
+**Python Code**:
+```python
+import pandas as pd
+
+df = pd.read_csv('../data_samples/dns_logs.csv')
+grouped = df.groupby(['client_ip', 'query_name']).size().reset_index(name='count')
+
+beacon_candidates = grouped[grouped['count'] > 100]
+print(beacon_candidates)
+```
+**Execution**: `python scripts/22_beaconing_domain_hunt.py`
+
+---
+
+### 23. `unusual_process_behavior.py`
+**Goal**: Detect anomalies in process execution, like svchost.exe running outside of system32.
+
+**Use Case**: Masquerading or process injection detection.
+
+**Python Code**:
+```python
+import pandas as pd
+
+df = pd.read_csv('../data_samples/sysmon_logs.csv')
+unusual = df[(df['Image'].str.endswith('svchost.exe')) & (~df['Image'].str.contains('system32', case=False))]
+
+print(unusual[['UtcTime', 'Image', 'CommandLine']])
+```
+**Execution**: `python scripts/23_unusual_process_behavior.py`
+
+---
+
+### 24. `command_line_anomaly.py`
+**Goal**: Flag suspicious command-line use (e.g., encoded PowerShell, curl, wget).
+
+**Use Case**: Command execution and malware delivery analysis.
+
+**Python Code**:
+```python
+import pandas as pd
+
+df = pd.read_csv('../data_samples/sysmon_logs.csv')
+bad_patterns = ['curl', 'wget', 'bitsadmin', 'invoke-webrequest', 'powershell -enc']
+
+cmd_matches = df[df['CommandLine'].str.lower().str.contains('|'.join(bad_patterns), na=False)]
+print(cmd_matches[['UtcTime', 'Image', 'CommandLine']])
+```
+**Execution**: `python scripts/24_command_line_anomaly.py`
+
+---
+
+### 25. `user_agent_anomaly_detector.py`
+**Goal**: Detect non-browser user agents that may be bots or scrapers.
+
+**Use Case**: Abnormal web access behavior analysis.
+
+**Python Code**:
+```python
+import pandas as pd
+
+df = pd.read_csv('../data_samples/web_proxy_logs.csv')
+known_agents = ['chrome', 'firefox', 'edge', 'safari']
+df['ua_lower'] = df['user_agent'].str.lower()
+suspicious_agents = df[~df['ua_lower'].str.contains('|'.join(known_agents))]
+
+print(suspicious_agents[['timestamp', 'src_ip', 'user_agent']])
+```
+**Execution**: `python scripts/25_user_agent_anomaly_detector.py`
+
+---
+
+### 26. `ransomware_activity_detector.py`
+**Goal**: Identify ransomware behavior by detecting mass file changes/extensions.
+
+**Use Case**: Initial detection of file encryption attacks.
+
+**Python Code**:
+```python
+import pandas as pd
+
+df = pd.read_csv('../data_samples/file_events.csv')
+df['ext'] = df['FileName'].str.extract(r'(\.\w+)$')
+suspicious_ext = ['.locky', '.crypted', '.pay2decrypt', '.enc']
+matches = df[df['ext'].isin(suspicious_ext)]
+
+print(matches[['UtcTime', 'FileName', 'ProcessName']])
+```
+**Execution**: `python scripts/26_ransomware_activity_detector.py`
+
+---
+
+### 27. `internal_network_scan_detector.py`
+**Goal**: Detect internal scanning behavior (e.g., Nmap).
+
+**Use Case**: Identify lateral movement and unauthorized network discovery.
+
+**Python Code**:
+```python
+import pandas as pd
+
+df = pd.read_csv('../data_samples/network_events.csv')
+port_scans = df.groupby(['source_ip', 'dest_port']).size().reset_index(name='count')
+scan_counts = port_scans.groupby('source_ip').count()
+suspicious = scan_counts[scan_counts['dest_port'] > 50]
+print(suspicious)
+```
+**Execution**: `python scripts/27_internal_network_scan_detector.py`
+
+---
+
+### 28. `malicious_browser_extension_hunt.py`
+**Goal**: Identify risky Chrome extensions based on permissions.
+
+**Use Case**: Browser-based data theft or adware analysis.
+
+**Python Code**:
+```python
+import os
+import json
+
+ext_dir = 'C:/Users/User/AppData/Local/Google/Chrome/User Data/Default/Extensions'
+for ext_id in os.listdir(ext_dir):
+    for version in os.listdir(os.path.join(ext_dir, ext_id)):
+        manifest_path = os.path.join(ext_dir, ext_id, version, 'manifest.json')
+        try:
+            with open(manifest_path, 'r') as file:
+                manifest = json.load(file)
+                print(f"Extension: {manifest.get('name')} | ID: {ext_id}")
+        except:
+            continue
+```
+**Execution**: `python scripts/28_malicious_browser_extension_hunt.py`
+
+---
+
+### 29. `unauthorized_file_share.py`
+**Goal**: Detect uploads to unauthorized cloud storage providers.
+
+**Use Case**: Insider threat and DLP monitoring.
+
+**Python Code**:
+```python
+import pandas as pd
+
+df = pd.read_csv('../data_samples/web_proxy_logs.csv')
+file_sharing = ['dropbox.com', 'drive.google.com', 'wetransfer.com']
+suspicious = df[df['host'].str.contains('|'.join(file_sharing), na=False)]
+print(suspicious[['timestamp', 'src_ip', 'host', 'url']])
+```
+**Execution**: `python scripts/29_unauthorized_file_share.py`
+
+---
+
+### 30. `vpn_exfil_behavior.py`
+**Goal**: Flag data exfiltration over TOR/VPN endpoints.
+
+**Use Case**: Monitoring for hidden outbound tunnels.
+
+**Python Code**:
+```python
+import pandas as pd
+
+df = pd.read_csv('../data_samples/firewall_logs.csv')
+vpn_ips = ['185.220.101.1', '172.105.28.93']
+matches = df[df['dest_ip'].isin(vpn_ips)]
+
+print(matches[['timestamp', 'src_ip', 'dest_ip', 'bytes_sent']])
+```
+**Execution**: `python scripts/30_vpn_exfil_behavior.py
+
+
 
 
 
