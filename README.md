@@ -152,8 +152,7 @@ else:
 
 ---
 
-<details>
-<summary><strong>6. cve_auto_lookup.py</strong></summary>
+### 6. cve_auto_lookup.py</strong
 
 **Goal**
 Retrieve detailed Common Vulnerabilities and Exposures (CVE) information from the National Vulnerability Database (NVD) API.
@@ -188,10 +187,8 @@ try:
 except Exception as e:
     print(f"Error: {e}")
 ```
-</details>
 
-<details>
-<summary><strong>7. dns_tunneling_detector.py</strong></summary>
+### 7. dns_tunneling_detector.py</strong
 
 **Goal**
 Detect potential DNS tunneling using TXT records.
@@ -216,10 +213,10 @@ if not suspicious.empty:
 else:
     print("✅ No suspicious DNS tunneling detected.")
 ```
-</details>
 
-<details>
-<summary><strong>8. network_port_scanner.py</strong></summary>
+
+
+### 8. network_port_scanner.py</strong
 
 **Goal**
 Perform basic port scan to detect open ports.
@@ -249,10 +246,9 @@ for port in ports:
     except Exception as e:
         print(e)
 ```
-</details>
 
-<details>
-<summary><strong>9. patch_compliance_checker.py</strong></summary>
+
+### 9. patch_compliance_checker.py</strong
 
 **Goal**
 Check for critical Windows KB patches on the system.
@@ -277,10 +273,9 @@ for kb in required_kbs:
     else:
         print(f"❌ {kb} is missing.")
 ```
-</details>
 
-<details>
-<summary><strong>10. rdp_session_monitor.py</strong></summary>
+
+### 10. rdp_session_monitor.py</strong
 
 **Goal**
 Monitor successful RDP login events.
@@ -305,7 +300,6 @@ if not rdp_sessions.empty:
 else:
     print("✅ No RDP sessions detected.")
 ```
-</details>
 
 
 ### 11. `detect_persistence_registry_keys.py`
