@@ -14,19 +14,7 @@ This repository contains **30 Python scripts** categorized under threat detectio
 
 ---
 
-
-
-
-
-
-# Threat Hunting with Python – Script Library
-
-## Introduction
-This project contains 30 actionable Python scripts designed to help SOC analysts automate log parsing, IOC detection, and behavior-based threat hunting. Each script can be run independently using Bash or terminal environments.
-
----
-
-## Script Index
+## Scripts
 
 
 <details>
@@ -38,10 +26,6 @@ Detect suspicious parent-child processes (e.g., winword.exe → cmd.exe)
 **When to Use**  
 After phishing emails or macro document usage
 
-**How to Execute**  
-```
-python scripts/1_detect_suspicious_processes.py
-```
 
 **Python Code**
 ```python
@@ -65,6 +49,11 @@ if not matches.empty:
 else:
     print("✅ No anomalies detected.")
 
+```
+
+**How to Execute**  
+```
+python scripts/1_detect_suspicious_processes.py
 ```
 
 </details>
