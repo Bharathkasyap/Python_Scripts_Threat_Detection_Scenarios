@@ -338,27 +338,6 @@ else:
 
 ---
 
-### 6–10 → Coming in Batch 2
-
-
-
-
-
-
-
-
-
-## Python Script Library for Proactive Cyber Threat Hunting and Remediation
-
-### 📖 Introduction
-In today's evolving threat landscape, proactive threat hunting is indispensable for identifying and neutralizing sophisticated malicious activities that bypass traditional security defenses. Python scripting enhances these capabilities by automating analysis, parsing logs, and simulating scenarios.
-
-This repository contains 30 Python scripts, grouped into 3 batches, for use in real-world threat hunting and remediation.
-
----
-
-## 📂 Batch 2: Scripts 6–10
-
 <details>
 <summary><strong>6. cve_auto_lookup.py</strong></summary>
 
@@ -513,6 +492,251 @@ else:
     print("✅ No RDP sessions detected.")
 ```
 </details>
+
+
+# 🚀 Script Catalog – Batch 2 (Scripts 11–20)
+
+### 11. `detect_persistence_registry_keys.py`
+**Goal**: Identify registry keys commonly used for persistence (e.g., Run, RunOnce).
+
+**Use Case**: Hunt for malware maintaining persistence via Windows registry modifications.
+
+**Python Code**:
+```python
+import pandas as pd
+
+# Simulate exported registry entries
+df = pd.read_csv('../data_samples/registry_export.csv')
+
+suspicious_keys = [
+    "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+    "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+]
+
+matches = df[df["RegistryPath"].isin(suspicious_keys)]
+
+if not matches.empty:
+    print("⚠️ Persistence-related registry keys detected:")
+    print(matches[["RegistryPath", "ValueName", "ValueData"]])
+else:
+    print("✅ No suspicious registry keys found.")
+```
+**Execution**: `python scripts/11_detect_persistence_registry_keys.py`
+
+---
+
+### 12. `scripted_mimikatz_artifact_scan.py`
+**Goal**: Detect presence of mimikatz signatures or related artifacts.
+
+**Use Case**: Threat hunting for credential dumping attempts.
+
+**Python Code**:
+```python
+import os
+
+suspicious_terms = ["mimikatz", "sekurlsa", "kerberos", "pth"]
+
+for root, dirs, files in os.walk("C:\\"):
+    for file in files:
+        try:
+            path = os.path.join(root, file)
+            with open(path, "r", errors="ignore") as f:
+                content = f.read().lower()
+                if any(term in content for term in suspicious_terms):
+                    print(f"⚠️ Mimikatz-related term found in {path}")
+        except:
+            continue
+```
+**Execution**: `python scripts/12_scripted_mimikatz_artifact_scan.py`
+
+---
+
+### 13. `scan_for_unusual_scheduled_tasks.py`
+**Goal**: Enumerate scheduled tasks and highlight uncommon entries.
+
+**Use Case**: Detection of persistence mechanisms and malicious scripts.
+
+**Python Code**:
+```python
+import subprocess
+import re
+
+print("--- Scheduled Task Scan ---")
+output = subprocess.getoutput("schtasks /query /fo LIST /v")
+
+suspicious_entries = re.findall(r"Task To Run:\s+(.+)", output)
+
+for task in suspicious_entries:
+    if any(keyword in task.lower() for keyword in ["powershell", "cmd", "vbs", ".bat", ".ps1"]):
+        print(f"⚠️ Suspicious task detected: {task}")
+```
+**Execution**: `python scripts/13_scan_for_unusual_scheduled_tasks.py`
+
+---
+
+### 14. `detect_remote_access_tools.py`
+**Goal**: Scan running processes for known RATs (Remote Access Tools).
+
+**Use Case**: Detect active usage of unauthorized remote control tools.
+
+**Python Code**:
+```python
+import psutil
+
+rat_indicators = ["anydesk", "teamviewer", "vnc", "remcos", "radmin"]
+
+print("--- Remote Access Tool Detection ---")
+for proc in psutil.process_iter(['pid', 'name']):
+    if any(rat in proc.info['name'].lower() for rat in rat_indicators):
+        print(f"⚠️ Potential RAT running: {proc.info['name']} (PID: {proc.info['pid']})")
+```
+**Execution**: `python scripts/14_detect_remote_access_tools.py`
+
+---
+
+### 15. `office_macro_analyzer.py`
+**Goal**: Check MS Office documents for embedded macros.
+
+**Use Case**: Pre-delivery inspection of files, phishing document analysis.
+
+**Python Code**:
+```python
+import oletools.olevba3 as olevba
+import os
+
+doc = olevba.VBA_Parser("../data_samples/macro_enabled.doc")
+if doc.detect_vba_macros():
+    print("⚠️ Macros found in Office document!")
+    for (filename, stream_path, vba_filename, vba_code) in doc.extract_macros():
+        print(f"Macro from {vba_filename}:\n{vba_code[:200]}...")
+else:
+    print("✅ No macros found.")
+```
+**Execution**: `python scripts/15_office_macro_analyzer.py`
+
+---
+
+### 16. `lateral_movement_event_monitor.py`
+**Goal**: Detect suspicious use of PsExec, WMI, and PowerShell remoting.
+
+**Use Case**: Identify attacker movement across internal network.
+
+**Python Code**:
+```python
+import pandas as pd
+
+df = pd.read_csv('../data_samples/sysmon_events.csv')
+
+lateral_tools = ["psexec", "wmic", "powershell -enc"]
+df["CommandLine"] = df["CommandLine"].str.lower()
+
+matches = df[df["CommandLine"].str.contains('|'.join(lateral_tools), na=False)]
+
+if not matches.empty:
+    print("⚠️ Lateral movement attempts found:")
+    print(matches[["UtcTime", "Image", "CommandLine"]])
+else:
+    print("✅ No signs of lateral movement.")
+```
+**Execution**: `python scripts/16_lateral_movement_event_monitor.py`
+
+---
+
+### 17. `external_data_upload_monitor.py`
+**Goal**: Detect high-volume or unusual outbound traffic patterns.
+
+**Use Case**: Data exfiltration detection, breach investigation.
+
+**Python Code**:
+```python
+import pandas as pd
+
+network_logs = pd.read_csv("../data_samples/network_activity.csv")
+suspicious_traffic = network_logs[network_logs["dest_port"] == 443]
+suspicious_traffic = suspicious_traffic[suspicious_traffic["bytes_out"] > 10 * 1024 * 1024]
+
+if not suspicious_traffic.empty:
+    print("⚠️ Possible exfiltration over HTTPS detected:")
+    print(suspicious_traffic[["timestamp", "src_ip", "dest_ip", "bytes_out"]])
+else:
+    print("✅ No unusual outbound traffic.")
+```
+**Execution**: `python scripts/17_external_data_upload_monitor.py`
+
+---
+
+### 18. `dns_c2_beaconing_detector.py`
+**Goal**: Detect beaconing patterns to DGA (domain generation algorithm) or suspicious domains.
+
+**Use Case**: Command-and-Control (C2) detection.
+
+**Python Code**:
+```python
+import pandas as pd
+
+logs = pd.read_csv("../data_samples/dns_logs.csv")
+beaconing = logs[logs['query_name'].str.contains("xyz", na=False)]
+
+if not beaconing.empty:
+    print("⚠️ DNS beaconing behavior detected:")
+    print(beaconing[["timestamp", "client_ip", "query_name"]])
+else:
+    print("✅ No beaconing activity detected.")
+```
+**Execution**: `python scripts/18_dns_c2_beaconing_detector.py`
+
+---
+
+### 19. `shadow_admin_privilege_audit.py`
+**Goal**: Identify users with excessive privileges not formally tracked.
+
+**Use Case**: Privilege audit and lateral movement risk mitigation.
+
+**Python Code**:
+```python
+import pandas as pd
+
+df = pd.read_csv("../data_samples/user_rights.csv")
+elevated = df[df["role"].str.contains("admin|domain", case=False, na=False)]
+
+print("--- Shadow Admin Audit ---")
+print(elevated[["username", "role", "group_membership"]])
+```
+**Execution**: `python scripts/19_shadow_admin_privilege_audit.py`
+
+---
+
+### 20. `power_shell_encoded_command_detector.py`
+**Goal**: Detect use of base64-encoded PowerShell commands.
+
+**Use Case**: Obfuscation detection, malware execution analysis.
+
+**Python Code**:
+```python
+import pandas as pd
+
+log_data = pd.read_csv("../data_samples/powershell_logs.csv")
+encoded = log_data[log_data["CommandLine"].str.contains("-enc", case=False, na=False)]
+
+if not encoded.empty:
+    print("⚠️ Encoded PowerShell commands detected:")
+    print(encoded[["timestamp", "user", "CommandLine"]])
+else:
+    print("✅ No suspicious PowerShell encoding usage found.")
+```
+**Execution**: `python scripts/20_power_shell_encoded_command_detector.py`
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
